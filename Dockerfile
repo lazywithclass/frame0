@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 	wget
 
 WORKDIR /app
-COPY frame0_1.0.0~beta.17_amd64.deb /app
-RUN dpkg -i frame0_1.0.0~beta.17_amd64.deb 
+COPY frame0_1.3.0_amd64.deb /app
+RUN dpkg -i frame0_1.3.0_amd64.deb
 
 CMD ["frame0", "--no-sandbox"]
