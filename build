@@ -1,4 +1,32 @@
 #!/usr/bin/env bash
 
+set -e
 
-docker build -t frame0 .
+docker rm -f frame0-build 2>/dev/null || true
+
+docker run --dns=8.8.8.8 --name frame0-build \
+  -v "$(pwd)/frame0_1.3.0_amd64.deb:/tmp/frame0.deb:ro" \
+  debian:bookworm \
+  bash -c "apt-get update && apt-get install -y \
+    build-essential \
+    libgtk-3-0 \
+    libnotify4 \
+    libnss3 \
+    xdg-utils \
+    libatspi2.0-0 \
+    libdrm2 \
+    libgbm1 \
+    libxcb-dri3-0 \
+    trash-cli \
+    libglib2.0-bin \
+    gvfs \
+    wget \
+    libasound2 \
+  && dpkg -i /tmp/frame0.deb"
+
+docker commit \
+  --change='CMD ["frame0", "--no-sandbox"]' \
+  --change='WORKDIR /app' \
+  frame0-build frame0
+
+docker rm frame0-build
